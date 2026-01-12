@@ -211,7 +211,7 @@ compat.o: compat.cpp
 
 .PHONY: clean
 clean:
-	@rm *.o crafty
+	@rm *.o
 
 # Do not change anything below this line!
 #
