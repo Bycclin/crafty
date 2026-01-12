@@ -1,3 +1,4 @@
+Makefile
 # To build crafty:
 #
 #  You want to set up for maximum optimization, but typically you will
@@ -89,8 +90,7 @@ unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
 		opt='-DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
-		-mpopcnt -fprofile-correction -pthread' \
+		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -DUNIX' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
 		crafty-make
 
@@ -191,36 +191,50 @@ gcc-profile:
 #  compiling both ways to see which way produces the fastest code.
 #
 
-#objects = main.o iterate.o time.o search.o quiesce.o evaluate.o thread.o \
+objects = main.o iterate.o time.o search.o quiesce.o evaluate.o thread.o \
         repeat.o hash.o next.o history.o movgen.o make.o unmake.o attacks.o \
         see.o boolean.o utility.o book.o drawn.o epd.o tbprobe.o \
         epdglue.o init.o input.o autotune.o interrupt.o option.o output.o \
         ponder.o resign.o root.o learn.o setboard.o test.o validate.o \
-        annotate.o analyze.o evtest.o bench.o edit.o data.o
+        annotate.o analyze.o evtest.o bench.o edit.o data.o compat.o
 
-objects = crafty.o
+#objects = crafty.o
+
+crafty-make: $(objects)
+	$(CC) -o crafty $^ $(LDFLAGS) $(CFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+#should probably not use CFLAGS.
+compat.o: compat.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@ 
+
+.PHONY
+clean:
+	@rm *.o
 
 # Do not change anything below this line!
+#
+#opts = $(opt) -D$(target)#
 
-opts = $(opt) -D$(target)
+#crafty-make:
+#	@$(MAKE) opt='$(opt)' CFLAGS='$(CFLAGS)' crafty
 
-crafty-make:
-	@$(MAKE) opt='$(opt)' CFLAGS='$(CFLAGS)' crafty
+#crafty.o: *.c *.h
 
-crafty.o: *.c *.h
+#crafty:	$(objects)
+#	$(CC) $(LDFLAGS) -o crafty $(objects) -lm  $(LIBS)
 
-crafty:	$(objects)
-	$(CC) $(LDFLAGS) -o crafty $(objects) -lm  $(LIBS)
+#evaluate.o: evaluate.h
 
-evaluate.o: evaluate.h
+#clean:
+#	-rm -f *.o crafty
 
-clean:
-	-rm -f *.o crafty
+#$(objects): chess.h data.h
 
-$(objects): chess.h data.h
+#.c.o:
+#	$(CC) $(CFLAGS) $(opts) -c $*.c
 
-.c.o:
-	$(CC) $(CFLAGS) $(opts) -c $*.c
-
-.s.o:
-	$(AS) $(AFLAGS) -o $*.o $*.s
+#.s.o:
+#	$(AS) $(AFLAGS) -o $*.o $*.s
