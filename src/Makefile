@@ -209,9 +209,9 @@ crafty-make: $(objects)
 compat.o: compat.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@ 
 
-.PHONY
+.PHONY: clean
 clean:
-	@rm *.o
+	@rm *.o crafty
 
 # Do not change anything below this line!
 #
