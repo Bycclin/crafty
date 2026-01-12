@@ -1,4 +1,3 @@
-Makefile
 # To build crafty:
 #
 #  You want to set up for maximum optimization, but typically you will
