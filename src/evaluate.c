@@ -2,6 +2,8 @@
 #include "evaluate.h"
 #include "data.h"
 
+int sf_nnue_eval_fen(sf_nnue_ctx* ctx, const char* fen, int optimism_cp);
+
 struct EvalCtx {
     EvalConfig cfg;
 
